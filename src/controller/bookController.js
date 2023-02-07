@@ -2,7 +2,7 @@ const { default: mongoose, isValidObjectId } = require("mongoose");
 const BookModel = require("../model/BookModel");
 const ReviewModel = require("../model/ReviewModel");
 const validation = require("../validator/validation");
-let { isValid, isVAlidISBN, isVAlidDate } = validation;
+let { isValid, isVAlidISBN, isVAlidDate, isValidImage } = validation;
 
 //>-------------------------------------- CREATE BOOK ----------------------------------------<//
 
@@ -108,6 +108,18 @@ exports.createBook = async (req, res) => {
                 .send({ status: false, message: "Date must be in YYYY-MM-DD format." });
         }
 
+        const files= req.files;
+
+        if(!files || !files.length)
+            return res
+                .status(400)
+                .send({status: false, message: "Please provide bookCover"});
+
+        if(!isValidImage(files[0]))
+            return res
+                .status(400)
+                .send({status: false, message: "Please provide valid image."});
+
         /*----------------------------------- Checking Unique -----------------------------*/
 
         const check = await BookModel.findOne({ $or: [{ title }, { ISBN }] });
@@ -125,7 +137,9 @@ exports.createBook = async (req, res) => {
             }
         }
 
-        /*---------------------------------------------------------------------------------------*/
+        /*----------------------------------- Amazon S3 ---------------------------------*/
+
+        data.bookCover = await uploadFile( files[0] );
 
         let createBook = await BookModel.create(data);
 
@@ -144,8 +158,7 @@ exports.createBook = async (req, res) => {
 exports.getBooks = async function (req, res) {
     try {
         const queries = req.query;
-        queries.title = queries.title.trim().toLowerCase();
-        const books = await BookModel.find({ ...queries, isDeleted: false }).select(
+        let books = await BookModel.find({ ...queries, isDeleted: false }).select(
             {
                 title: 1,
                 excerpt: 1,
@@ -200,7 +213,7 @@ exports.updateBook = async function (req, res) {
         if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, message: "Body is empty" });
         }
-        const { title, excerpt, releasedAt, ISBN, ...rest } = data;
+        let { title, excerpt, releasedAt, ISBN, ...rest } = data;
         if (Object.keys(rest).length != 0) {
             //Checking extra attributes are added or not
             return res
@@ -284,9 +297,9 @@ exports.deletedBook = async (req, res) => {
 
         return res.status(200).send({
             status: true,
-            msg: "Book has been deleted successfully."
+            message: "Book has been deleted successfully."
         });
     } catch (err) {
-        return res.status(500).send({ status: false, msg: err.message });
+        return res.status(500).send({ status: false, message: err.message });
     }
 };

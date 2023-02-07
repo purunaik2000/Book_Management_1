@@ -1,10 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const multer = require('multer');
 const cors = require('cors');
 const app = express();
 const route = require("./route/route");
 
 app.use(express.json());
+app.use(multer().any());
 app.use(cors());
 
 mongoose.set("strictQuery", true);

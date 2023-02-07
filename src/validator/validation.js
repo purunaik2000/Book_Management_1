@@ -62,6 +62,10 @@ const isVAlidDate = function (releasedAt) {
   return abc;
 };
 
+const isValidImage = function (image) {
+  return /[^\s]+(.*?).(jpg|jpeg|png|gif|JPG|JPEG|PNG|GIF)$/.test(image);
+}
+
 module.exports = {
   isValidTitle,
   isValidName,
@@ -71,4 +75,5 @@ module.exports = {
   isValid,
   isVAlidISBN,
   isVAlidDate,
+  isValidImage
 };

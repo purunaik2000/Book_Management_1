@@ -14,46 +14,46 @@ exports.createUser = async function (req, res) {
     if (Object.keys(data).length == 0) {
       return res
         .status(400)
-        .send({ status: false, msg: "Please provide key in request body" });
+        .send({ status: false, message: "Please provide key in request body" });
     }
     Object.keys(data).forEach((x) => (data[x] = data[x].toString().trim()));
 
     if (!title) {
       return res
         .status(400)
-        .send({ status: false, msg: "Please provide title" });
+        .send({ status: false, message: "Please provide title" });
     }
 
     if (!name) {
       return res
         .status(400)
-        .send({ status: false, msg: "Please provide name" });
+        .send({ status: false, message: "Please provide name" });
     }
     if (!phone) {
       return res
         .status(400)
-        .send({ status: false, msg: "Please provide phone no." });
+        .send({ status: false, message: "Please provide phone no." });
     }
     if (!email) {
       return res
         .status(400)
-        .send({ status: false, msg: "Please provide email" });
+        .send({ status: false, message: "Please provide email" });
     }
     if (!password) {
       return res
         .status(400)
-        .send({ status: false, msg: "Please provide password" });
+        .send({ status: false, message: "Please provide password" });
     }
     if (!isValidTitle(title)) {
       return res
         .status(400)
-        .send({ status: false, msg: "title should be alphabets only" });
+        .send({ status: false, message: "title should be alphabets only" });
     }
 
     if (!isValidName(name)) {
       return res
         .status(400)
-        .send({ status: false, msg: "name should be alphabets only" });
+        .send({ status: false, message: "name should be alphabets only" });
     }
 
     if (!isValidPhone(phone))
@@ -65,13 +65,13 @@ exports.createUser = async function (req, res) {
     if (!isValidEmail(email)) {
       return res
         .status(400)
-        .send({ status: false, msg: "Provide a valid email" });
+        .send({ status: false, message: "Provide a valid email" });
     }
 
     if (!isValidPassword(password)) {
       return res.status(400).send({
         status: false,
-        msg: "Password must contain at least 1 upperCase, 1 lowerCase and 1 special character, minlen = 8, maxlen =15.",
+        message: "Password must contain at least 1 upperCase, 1 lowerCase and 1 special character, minlen = 8, maxlen =15.",
       });
     }
 
@@ -114,7 +114,7 @@ exports.createUser = async function (req, res) {
 
     res.status(201).send({ status: true, data: create });
   } catch (err) {
-    res.status(500).send({ msg: err.message });
+    res.status(500).send({ message: err.message });
   }
 };
 
